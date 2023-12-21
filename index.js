@@ -51,6 +51,21 @@ async function run() {
       }
     });
 
+    // api to update status of a task
+    app.patch("/tasks/:id", async (req, res) => {
+      try {
+        const taskId = req.params.id;
+        const { status } = req.body;
+        const result = await taskCollection.updateOne(
+          { _id: new ObjectId(taskId) },
+          { $set: { status: status } }
+        );
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
+
     // api to delete a task
     app.delete("/tasks/:id", async (req, res) => {
       try {
