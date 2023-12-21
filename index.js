@@ -1,7 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -45,6 +45,19 @@ async function run() {
       try {
         const newTask = req.body;
         const result = await taskCollection.insertOne(newTask);
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
+
+    // api to delete a task
+    app.delete("/tasks/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const result = await taskCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
         res.status(200).send(result);
       } catch (error) {
         res.status(500).send({ error: error.message });
