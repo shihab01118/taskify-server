@@ -27,6 +27,20 @@ async function run() {
 
     const taskCollection = client.db("taskifyDB").collection("tasks");
 
+    // get task by user email
+    app.get("/tasks/:email", async (req, res) => {
+      try {
+        const email = req.params.email;
+        const result = await taskCollection
+          .find({ requester_email: email })
+          .toArray();
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ error: error.message });
+      }
+    });
+
+    // api to post a task
     app.post("/tasks", async (req, res) => {
       try {
         const newTask = req.body;
